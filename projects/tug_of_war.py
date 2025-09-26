@@ -18,7 +18,7 @@ def button_1_action():
     global player1_score, player2_score
     print("[!] Button 1 pressed")
     player1_score += 1
-    player2_score -= 1
+    # player2_score -= 1
     led_1.on()
     sleep(0.1)
     led_1.off()
@@ -27,7 +27,7 @@ def button_2_action():
     global player1_score, player2_score
     print("[!] Button 2 pressed")
     player2_score += 1
-    player1_score -= 1
+    # player1_score -= 1
     led_2.on()
     sleep(0.1)
     led_2.off()
@@ -75,15 +75,27 @@ def start_game(timer=10):
         print(">>> 🏆 Player 1 (GREEN) Wins! <<<")
         led_1.blink(0.2, 0.2, 5)
         led_1.on()
+        sleep(5)
+        led_1.off()
+        print("[debug] led 1 should be on indefinitely")
     elif player2_score > player1_score:
-        print(">>> 🏆 Player 2 (LED) Wins! <<<")
+        print(">>> 🏆 Player 2 (RED) Wins! <<<")
         led_2.blink(0.2, 0.2, 5)
         led_2.on()
+        sleep(5)
+        led_2.off()
+        print("[debug] led 2 should be on indefinitely")
     else:
         print(">>> 🤝 It's a Draw! <<<")
         for _ in range(5):
             blink_both_led()
             sleep(0.2)
+
+        led_1.on()
+        led_2.on()
+        sleep(5)
+
+    print("[Game ended, run again for another game.]")
 
 # Game duration
 countdown = int(input("[?] Enter the game duration (seconds): "))
