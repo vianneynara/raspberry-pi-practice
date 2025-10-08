@@ -2,6 +2,7 @@ from time import sleep
 
 import gpiozero
 from signal import pause
+from gpiozero.tones import Tone
 
 # Setup LED on GPIO pin 14
 led = gpiozero.LED(
@@ -28,9 +29,10 @@ def motion_detected():
     print("Motion detected!")
     while alarm_is_on:
         # buzzer.on()
-        buzzer.play("600hz")
+        buzzer.play(Tone(600.0))
         led.on()
         sleep(0.1)
+        # buzzer.off()
         buzzer.stop()
         led.off()
         sleep(0.1)
