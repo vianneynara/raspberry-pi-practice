@@ -29,7 +29,7 @@ def motion_detected():
     print("Motion detected!")
     while alarm_is_on:
         # buzzer.on()
-        buzzer.play(Tone(200.0))
+        buzzer.play(Tone(400.0))
         led.on()
         sleep(0.1)
         # buzzer.off()
