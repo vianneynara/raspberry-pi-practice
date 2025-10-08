@@ -11,8 +11,8 @@ motion_sensor = gpiozero.MotionSensor(
     pin=15
 )
 
-buzzer = gpiozero.Buzzer(pin=18)
-# buzzer = gpiozero.TonalBuzzer(pin=18)
+# buzzer = gpiozero.Buzzer(pin=18)
+buzzer = gpiozero.TonalBuzzer(pin=18)
 
 button = gpiozero.Button(
     pin=3
@@ -27,10 +27,11 @@ def motion_detected():
     alarm_is_on = True
     print("Motion detected!")
     while alarm_is_on:
-        buzzer.on()
+        # buzzer.on()
+        buzzer.play("600hz")
         led.on()
         sleep(0.1)
-        buzzer.off()
+        buzzer.stop()
         led.off()
         sleep(0.1)
 
