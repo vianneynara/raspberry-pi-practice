@@ -21,6 +21,7 @@ print("Menunggu gerakan")
 
 def motion_detected():
     global alarm_is_on
+    alarm_is_on = True
     print("Motion detected!")
     while alarm_is_on:
         led.on()
