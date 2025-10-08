@@ -40,7 +40,10 @@ def motion_detected():
 def button_pressed():
     global alarm_is_on
     print("Button pressed! Turning alarm off.")
+
+    # finalize states
     alarm_is_on = False
+    buzzer.stop()
 
 
 motion_sensor.when_motion = motion_detected
