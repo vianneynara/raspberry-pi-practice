@@ -5,7 +5,8 @@ import board
 import adafruit_dht
 
 dht = adafruit_dht.DHT11(
-    pin=board.D17
+    pin=board.D17,
+    use_pulseio=False
 )
 
 def read_sensors() -> tuple[float | None, float | None]:
