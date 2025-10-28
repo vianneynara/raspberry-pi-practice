@@ -44,7 +44,7 @@ def log(temperature,
         humidity,
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         ):
-    with open(LOGGING_FILE, "w", newline='') as f:
+    with open(LOGGING_FILE, "a", newline='') as f:
         writer = csv.writer(f)
         writer.writerow([timestamp, temperature, humidity])
 
