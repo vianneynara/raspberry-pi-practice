@@ -2,6 +2,7 @@ import csv
 import time
 import random
 import os
+import gpiozero
 
 import board
 import adafruit_dht
@@ -16,16 +17,22 @@ dht = adafruit_dht.DHT11(
     use_pulseio=False
 )
 
+led = gpiozero.LED(
+    pin=2
+)
+
 def read_sensors() -> tuple[float | None, float | None]:
     """Reads the temperature and humidity from the sensor.
 
     :return: temperature (float), humidity (float)
     """
     try:
+        led.on()
         temperature = dht.temperature
         humidity = dht.humidity
 
         print(f'[INFO] Reading temperature, humidity: {temperature}, {humidity}')
+        led.off()
         return temperature, humidity
     except RuntimeError as ex:
         print(f'[ERROR] {ex}')
