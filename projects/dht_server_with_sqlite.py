@@ -75,7 +75,7 @@ def home():
                 text-align: center;
                 margin-top: 50px;
             }}
-            h1 {{ color: #0066cc; }}
+            h1 {{ color: #8e26de; }}
             p {{ font-size: 18px; }}
         </style>
     </head>
@@ -135,7 +135,7 @@ def current():
                 text-align: center;
                 margin-top: 30px;
             }}
-            h1 {{ color: #0066cc; }}
+            h1 {{ color: #8e26de; }}
             p {{ font-size: 18px; }}
             table {{
                 margin: 20px auto;
@@ -149,7 +149,7 @@ def current():
                 border: 1px solid #ddd;
             }}
             th {{
-                background-color: #0066cc;
+                background-color: #8e26de;
                 color: white;
             }}
             tr:nth-child(even) {{ background-color: #f9f9f9; }}
@@ -162,7 +162,7 @@ def current():
             Temperature: <b>{current_temp}°C</b> | Humidity: <b>{current_hum}%</b>
         </p>
 
-        <h2>12 Jam Terakhir (Log Per Jam)</h2>
+        <h2>12 Jam Terakhir (Log Per 1 Menit)</h2>
         <table>
             <tr>
                 <th>Waktu</th>
