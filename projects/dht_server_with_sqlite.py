@@ -25,7 +25,7 @@ def home():
         <style>
             body {{
                 font-family: Arial;
-                back-ground-collor: #eef2f7;
+                back-ground-color: #eef2f7;
                 text-align: center;
                 margin-top: 50px;
             }}
@@ -60,7 +60,7 @@ def temperature():
         <style>
             body {{
                 font-family: Arial;
-                back-ground-color: #eef2f7;
+                back-ground-collor: #eef2f7;
                 text-align: center;
                 margin-top: 50px;
             }}
