@@ -13,7 +13,7 @@ dht = adafruit_dht.DHT11(
 )
 
 app = Flask(__name__)
-DB_NAME = 'temperature.db'
+DB_NAME = 'temp_humi.db'
 
 @app.route('/')
 def redirect_home():
@@ -56,8 +56,8 @@ def log_data_hourly():
         except Exception as e:
             print(f"Error logging temperature: {e}")
 
-        # Tunggu 1 jam (3600 detik)
-        time.sleep(3600)
+        # Wait 1 min
+        time.sleep(60)
 
 
 @app.route('/home')
@@ -187,5 +187,5 @@ if __name__ == '__main__':
     logger_thread.start()
 
     print("Server running at http://0.0.0.0:8080")
-    print("Saving data each hour to database")
+    print("Saving data periodically to database")
     app.run(host='0.0.0.0', port=8080)
