@@ -1,6 +1,6 @@
 import board
 import adafruit_dht
-from flask import Flask
+from flask import Flask, redirect
 import datetime
 import sqlite3
 import threading
@@ -14,6 +14,10 @@ dht = adafruit_dht.DHT11(
 
 app = Flask(__name__)
 DB_NAME = 'temperature.db'
+
+@app.route('/')
+def redirect_home():
+    return redirect('/home')
 
 
 def init_db():
@@ -81,14 +85,16 @@ def home():
             Server berjalan dengan Flask!<br>
             Waktu sekarang: <b>{time_now}</b>
         </p>
-        <p><a href="/temperature">Lihat Data Temperature</a></p>
+        <div style="text-align:center; margin-top: 20px;">
+            <button onclick="location.href='/current'">Lihat Data Temperatur dan Humidity</button>
+        </div>
     </body>
     </html>
     """
 
 
-@app.route('/temperature')
-def temperature():
+@app.route('/current')
+def current():
     """Halaman Temperature dengan 12 jam terakhir"""
     time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
