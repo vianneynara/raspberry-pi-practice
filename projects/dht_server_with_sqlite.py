@@ -15,10 +15,6 @@ dht = adafruit_dht.DHT11(
 app = Flask(__name__)
 DB_NAME = 'temp_humi.db'
 
-@app.route('/')
-def redirect_home():
-    return redirect('/home')
-
 
 def init_db():
     """Membuat tabel database jika belum ada"""
@@ -37,8 +33,48 @@ def init_db():
     conn.close()
 
 
-def log_data_hourly():
+def get_last_timestamp():
+    """Mengambil timestamp terakhir dari database"""
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        c = conn.cursor()
+        c.execute('SELECT timestamp FROM temperature_log ORDER BY id DESC LIMIT 1')
+        result = c.fetchone()
+        conn.close()
+
+        if result:
+            return datetime.datetime.strptime(result[0], "%Y-%m-%d %H:%M:%S")
+        return None
+    except Exception as e:
+        print(f"Error getting last timestamp: {e}")
+        return None
+
+
+def log_data_periodically():
     """Stores the data (temperature and humidity) every hour this method being executed."""
+
+    # Variables to calculate the initial wait time from latest timestamp
+    last_time = get_last_timestamp()
+    current_time = datetime.datetime.now()
+    interval = 60  # 1 minute
+
+    if last_time:
+        # Calculate delta from the latest timestamp from DB
+        time_diff = (current_time - last_time).total_seconds()
+
+        if time_diff < interval:
+            # still under the interval, wait until the end of the interval
+            initial_wait = interval - time_diff
+            print(f"Waiting {initial_wait:.1f} seconds to sync with last timestamp...")
+        else:
+            # if already more than the interval, start fresh
+            seconds_into_minute = current_time.second
+            initial_wait = interval - seconds_into_minute
+            print(f"Last data was {time_diff:.1f}s ago. Starting fresh in {initial_wait:.1f}s...")
+
+        time.sleep(initial_wait)
+
+    # Main loop to log
     while True:
         try:
             temp = dht.temperature
@@ -56,13 +92,18 @@ def log_data_hourly():
         except Exception as e:
             print(f"Error logging temperature: {e}")
 
-        # Wait 1 min
-        time.sleep(60)
+        # Wait according to the interval
+        time.sleep(interval)
 
+
+@app.route('/')
+def redirect_home():
+    """Redirect to homepage"""
+    return redirect('/home')
 
 @app.route('/home')
 def home():
-    """Halaman Utama"""
+    """Main page"""
     time_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return f"""
     <html>
@@ -183,7 +224,7 @@ if __name__ == '__main__':
     init_db()
 
     # Threading to save data every hour
-    logger_thread = threading.Thread(target=log_data_hourly, daemon=True)
+    logger_thread = threading.Thread(target=log_data_periodically, daemon=True)
     logger_thread.start()
 
     print("Server running at http://0.0.0.0:8080")
