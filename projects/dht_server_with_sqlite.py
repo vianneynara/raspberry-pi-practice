@@ -159,7 +159,7 @@ def current():
         <h1>Raspberry Pi Temperature Monitor</h1>
         <p>
             Waktu sekarang: <b>{time_now}</b><br>
-            Current Reading: <b>{current_temp}°C</b> | Humidity: <b>{current_hum}%</b>
+            Temperature: <b>{current_temp}°C</b> | Humidity: <b>{current_hum}%</b>
         </p>
 
         <h2>12 Jam Terakhir (Log Per Jam)</h2>
