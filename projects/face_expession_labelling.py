@@ -13,12 +13,13 @@ EXPRESSIONS = {
     2: "sedih",
     3: "marah",
     4: "kaget",
+    5: "nangis",
 }
 
 # Anchor paths to this module's directory
 MODULE_DIR = Path(__file__).resolve().parent
 base_output_dir = MODULE_DIR / "expressions"
-metadata_file = MODULE_DIR / "metadata.csv"
+metadata_file = base_output_dir / "captures_metadata.csv"
 
 # Initialize webcam
 cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
