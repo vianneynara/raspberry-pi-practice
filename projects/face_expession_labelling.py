@@ -23,7 +23,7 @@ base_output_dir = MODULE_DIR / "expressions"
 metadata_file = MODULE_DIR / "metadata.csv"
 
 # initialize webcam
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
 
 if not cap.isOpened():
     print("Webcam tidak terdeteksi!")
@@ -60,6 +60,9 @@ try:
 
             if choice in EXPRESSIONS.keys():
                 input_invalid = False
+
+        if not running:
+            break
 
         # capture the frame then save it to corresponding folder,
         # following choice folder under base_output_dir
