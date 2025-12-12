@@ -38,7 +38,8 @@ if not metadata_file.exists():
         writer.writerow(["timestamp", "image_path"])
 
 try:
-    while True:
+    running = True
+    while running:
         # print the expressions menu
         print("Klik angka (1-4) untuk memilih ekpresi wajah, 0 untuk keluar.")
         for i, expr in enumerate(EXPRESSIONS.values()):
@@ -47,13 +48,15 @@ try:
         # listen the user's input until valid
         input_invalid = True
 
-        if input() == "0":
-            print("\nProgram dihentikan oleh pengguna.")
-            break
-
         choice: int = -1
         while input_invalid:
-            choice = int(input("Pilih ekspresi: "))
+            choice = int(input("Masukkan angka:"))
+
+            if choice == 0:
+                print("\nProgram dihentikan oleh pengguna.")
+                running = False
+                break
+
             if choice in EXPRESSIONS.keys():
                 input_invalid = False
 
