@@ -3,6 +3,7 @@ import csv
 import os
 from datetime import datetime
 import gpiozero
+from pathlib import Path
 
 led = gpiozero.LED(
     pin=4
@@ -15,8 +16,10 @@ EXPRESSIONS = {
     4: "kaget",
 }
 
-base_output_dir = "expressions"
-metadata_file = "metadata.csv"
+# Step 1-2: Anchor paths to this module's directory
+MODULE_DIR = Path(__file__).resolve().parent
+base_output_dir = MODULE_DIR / "expressions"
+metadata_file = MODULE_DIR / "metadata.csv"
 
 # initialize webcam
 cap = cv2.VideoCapture(0)
@@ -25,12 +28,12 @@ if not cap.isOpened():
     print("Webcam tidak terdeteksi!")
     exit()
 
-# initialize folders
+# initialize folders (Step 3: use pathlib and ensure dirs exist)
 for expr in EXPRESSIONS.values():
-    os.makedirs(os.path.join(base_output_dir, expr), exist_ok=True)
+    (base_output_dir / expr).mkdir(parents=True, exist_ok=True)
 
-if not os.path.exists(metadata_file):
-    with open(metadata_file, mode='w', newline='') as file:
+if not metadata_file.exists():
+    with metadata_file.open(mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["timestamp", "image_path"])
 
@@ -50,7 +53,7 @@ try:
 
         choice: int = -1
         while input_invalid:
-            choice: int = int(input("Pilih ekspresi: "))
+            choice = int(input("Pilih ekspresi: "))
             if choice in EXPRESSIONS.keys():
                 input_invalid = False
 
@@ -58,14 +61,13 @@ try:
         # following choice folder under base_output_dir
         ret, frame = cap.read()
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        cv2.imwrite(
-            os.path.join(base_output_dir, EXPRESSIONS[choice], f"{timestamp} {EXPRESSIONS[choice]}.jpg"),
-            frame
-        )
+        image_path = base_output_dir / EXPRESSIONS[choice] / f"{timestamp} {EXPRESSIONS[choice]}.jpg"
+        cv2.imwrite(str(image_path), frame)
+
         # append metadata
-        with open(metadata_file, mode='a', newline='') as file:
+        with metadata_file.open(mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([timestamp, os.path.join(base_output_dir, EXPRESSIONS[choice], f"{timestamp} {EXPRESSIONS[choice]}.jpg")])
+            writer.writerow([timestamp, str(image_path)])
 
         print(f"Ekspresi {EXPRESSIONS[choice]} disimpan.")
         led.on()
