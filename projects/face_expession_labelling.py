@@ -51,7 +51,7 @@ try:
     running = True
     while running:
         # Print the expressions menu
-        print("\n[ Klik angka (1-4) untuk memilih ekpresi wajah, 0 untuk keluar. ]")
+        print("\n[ Klik angka (1-5) untuk memilih ekpresi wajah, 0 untuk keluar. ]")
         for i, expr in enumerate(EXPRESSIONS.values()):
             print(f"{i + 1}. {expr}")
 
