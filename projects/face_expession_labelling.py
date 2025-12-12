@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 import gpiozero
 from pathlib import Path
+from time import sleep
 
 led = gpiozero.LED(
     pin=4
@@ -50,7 +51,7 @@ try:
 
         choice: int = -1
         while input_invalid:
-            choice = int(input("Masukkan angka:"))
+            choice = int(input("Masukkan angka: "))
 
             if choice == 0:
                 print("\nProgram dihentikan oleh pengguna.")
@@ -74,7 +75,8 @@ try:
 
         print(f"Ekspresi {EXPRESSIONS[choice]} disimpan.")
         led.on()
-
+        sleep(0.5)
+        led.off()
 
 except KeyboardInterrupt:
     print("\nProgram terhenti.")
