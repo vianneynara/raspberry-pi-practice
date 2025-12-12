@@ -51,7 +51,7 @@ try:
     running = True
     while running:
         # Print the expressions menu
-        print("\nKlik angka (1-4) untuk memilih ekpresi wajah, 0 untuk keluar.")
+        print("\n[ Klik angka (1-4) untuk memilih ekpresi wajah, 0 untuk keluar. ]")
         for i, expr in enumerate(EXPRESSIONS.values()):
             print(f"{i + 1}. {expr}")
 
@@ -64,16 +64,16 @@ try:
                 choice = int(input("Masukkan angka: "))
 
                 if choice == 0:
-                    print("\nProgram dihentikan oleh pengguna.")
+                    print("\n🚪 Program dihentikan oleh pengguna.")
                     running = False
                     break
 
                 if choice in EXPRESSIONS.keys():
                     input_invalid = False
                 else:
-                    print("Pilihan tidak valid. Masukkan angka 0-4.")
+                    print("❌ Pilihan tidak valid. Masukkan angka 0-4.")
             except ValueError:
-                print("Masukkan angka yang valid.")
+                print("❌ Masukkan angka yang valid.")
 
         if not running:
             break
@@ -85,7 +85,7 @@ try:
         ret, frame = cap.read()
 
         if not ret:
-            print("Gagal mengambil gambar dari webcam.")
+            print("❌ Gagal mengambil gambar dari webcam.")
             continue
 
         # Save frame to corresponding folder
@@ -98,7 +98,7 @@ try:
             writer = csv.writer(file)
             writer.writerow([timestamp, str(image_path)])
 
-        print(f"✓ Ekspresi '{EXPRESSIONS[choice]}' disimpan: {image_path.name}")
+        print(f"✅ Ekspresi '{EXPRESSIONS[choice]}' disimpan: {image_path.name}")
         led.on()
         sleep(0.5)
         led.off()
@@ -107,4 +107,5 @@ except KeyboardInterrupt:
     print("\nProgram terhenti.")
 
 finally:
-    c
+    cap.release()
+    cv2.destroyAllWindows()
