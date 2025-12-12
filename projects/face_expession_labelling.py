@@ -6,9 +6,7 @@ import gpiozero
 from pathlib import Path
 from time import sleep
 
-led = gpiozero.LED(
-    pin=4
-)
+led = gpiozero.LED(pin=4)
 
 EXPRESSIONS = {
     1: "senang",
@@ -17,19 +15,22 @@ EXPRESSIONS = {
     4: "kaget",
 }
 
-# Step 1-2: Anchor paths to this module's directory
+# Anchor paths to this module's directory
 MODULE_DIR = Path(__file__).resolve().parent
 base_output_dir = MODULE_DIR / "expressions"
 metadata_file = MODULE_DIR / "metadata.csv"
 
-# initialize webcam
+# Initialize webcam
 cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
 
 if not cap.isOpened():
     print("Webcam tidak terdeteksi!")
     exit()
 
-# initialize folders (Step 3: use pathlib and ensure dirs exist)
+# Reduce buffer size to minimize lag
+cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+
+# Initialize folders
 for expr in EXPRESSIONS.values():
     (base_output_dir / expr).mkdir(parents=True, exist_ok=True)
 
@@ -38,45 +39,65 @@ if not metadata_file.exists():
         writer = csv.writer(file)
         writer.writerow(["timestamp", "image_path"])
 
+
+def flush_camera_buffer(cap, num_frames=5):
+    """Flush old frames from camera buffer"""
+    for _ in range(num_frames):
+        cap.grab()
+
+
 try:
     running = True
     while running:
-        # print the expressions menu
-        print("Klik angka (1-4) untuk memilih ekpresi wajah, 0 untuk keluar.")
+        # Print the expressions menu
+        print("\nKlik angka (1-4) untuk memilih ekpresi wajah, 0 untuk keluar.")
         for i, expr in enumerate(EXPRESSIONS.values()):
-            print(f"{i+1}. {expr}")
+            print(f"{i + 1}. {expr}")
 
-        # listen the user's input until valid
+        # Listen to user's input until valid
         input_invalid = True
-
         choice: int = -1
+
         while input_invalid:
-            choice = int(input("Masukkan angka: "))
+            try:
+                choice = int(input("Masukkan angka: "))
 
-            if choice == 0:
-                print("\nProgram dihentikan oleh pengguna.")
-                running = False
-                break
+                if choice == 0:
+                    print("\nProgram dihentikan oleh pengguna.")
+                    running = False
+                    break
 
-            if choice in EXPRESSIONS.keys():
-                input_invalid = False
+                if choice in EXPRESSIONS.keys():
+                    input_invalid = False
+                else:
+                    print("Pilihan tidak valid. Masukkan angka 0-4.")
+            except ValueError:
+                print("Masukkan angka yang valid.")
 
         if not running:
             break
 
-        # capture the frame then save it to corresponding folder,
-        # following choice folder under base_output_dir
+        # Flush buffer to get fresh frame
+        flush_camera_buffer(cap)
+
+        # Capture fresh frame
         ret, frame = cap.read()
+
+        if not ret:
+            print("Gagal mengambil gambar dari webcam.")
+            continue
+
+        # Save frame to corresponding folder
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        image_path = base_output_dir / EXPRESSIONS[choice] / f"{timestamp} {EXPRESSIONS[choice]}.jpg"
+        image_path = base_output_dir / EXPRESSIONS[choice] / f"{timestamp}_{EXPRESSIONS[choice]}.jpg"
         cv2.imwrite(str(image_path), frame)
 
-        # append metadata
+        # Append metadata
         with metadata_file.open(mode='a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([timestamp, str(image_path)])
 
-        print(f"Ekspresi {EXPRESSIONS[choice]} disimpan.")
+        print(f"✓ Ekspresi '{EXPRESSIONS[choice]}' disimpan: {image_path.name}")
         led.on()
         sleep(0.5)
         led.off()
@@ -85,5 +106,4 @@ except KeyboardInterrupt:
     print("\nProgram terhenti.")
 
 finally:
-    cap.release()
-    cv2.destroyAllWindows()
+    c
